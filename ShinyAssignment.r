@@ -121,6 +121,7 @@ server <- function(input, output) {
     })
     
     
+    
     # print data
     output$contents <- renderTable({
         if(input$disp == "head") {
@@ -133,21 +134,28 @@ server <- function(input, output) {
 
 
 
-
-    
-    
-
-    
-    
-    # output$summary <- renderPrint({
-    #     lmPlot <- lm(y ~ x, data = dataInput())
-    #     attributes(summary(lmPlot))
-    # })
-    
-
-    
-
+    # output the summarty
+    output$summary <- renderPrint({
+        lmPlot <- lm(y ~ x, data = dataInput())
+        print(summary(lmPlot))
+        # attributes(summary(lmPlot))
         
+        # paste0("slope: ", round(summary(lmPlot)$r.squared, 4))
+        # paste0("intercept: ", round(summary(lmPlot)$intercept, 4))
+        # paste0("correlation coefficient: ", round(summary(lmPlot)$coefficients, 4))
+        # paste0("r squared: ", round(summary(lmPlot)$r.squared, 4))
+
+    })
+    
+    
+
+
+
+    
+
+    
+
+    
 }
 
 # Run the application 
