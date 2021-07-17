@@ -83,6 +83,8 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
+    
+    
     # load data
     dataInput <- reactive({
         req(input$file1)
@@ -93,12 +95,29 @@ server <- function(input, output) {
                        quote = input$quote)
         return(df)
     })
+ 
+    
+    
+    # reactive expression for linear model
+    linear_regressor <- eventReactive(input$lmPlot, {
+        # put function here
+        lmPlot <- lm(y ~ x, data = dataInput())
+    })
+       
     
     
     # plot scatter
     output$scatterPlot <- renderPlot({
         plot( y ~ x, data = dataInput())
         ## plot(dataInput()$x, dataInput()$y, xlab = "x", ylab = "y")
+    })
+    
+    
+    
+    # plot scatter with predicting value
+    output$lmPlot <- renderPlot({
+        plot( y ~ x, data = dataInput())
+        abline(linear_regressor(), col = "red", lwd = 2)
     })
     
     
@@ -111,25 +130,17 @@ server <- function(input, output) {
             return(dataInput())
         }
     }) 
+
+
+
+
     
     
-    # reactive expression for linear model
-    linear_regressor <- eventReactive(input$lmPlot, {
-        ## linear_regressor <- lm(y ~ x, data = dataInput())
-        lmPlot <- lm(y ~ x, data = dataInput())
-    })
-    
-    
-    # plot scatter with predicting value
-    output$lmtPlot <- renderPlot({
-        plot( y ~ x, data = dataInput())
-        abline(linear_regressor(), col = "red", lwd = 2)
-    })
-    
+
     
     
     # output$summary <- renderPrint({
-    #     lmtPlot <- lm(y ~ x, data = dataInput())
+    #     lmPlot <- lm(y ~ x, data = dataInput())
     #     attributes(summary(lmPlot))
     # })
     
