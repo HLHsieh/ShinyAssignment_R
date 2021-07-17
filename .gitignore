@@ -6,6 +6,9 @@
 .jupyter-server-log.txt
 .local/
 .profile
+.gitconfig
+.rstudio/
+.subversion/
 
 # History files
 .Rhistory
