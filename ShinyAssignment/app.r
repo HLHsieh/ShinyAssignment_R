@@ -1,12 +1,5 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
 
+# Load package
 library(shiny)
 
 # Define UI for application that draws a histogram
@@ -65,7 +58,7 @@ ui <- fluidPage(
             tags$hr(),
             
             # Action Button for linear model
-            actionButton("lmPlot", label = "Linear Model"),
+            actionButton("lmPlot", label = "Linear Model")
             
         ),
 
@@ -74,15 +67,13 @@ ui <- fluidPage(
         mainPanel(
            plotOutput("scatterPlot"),
            tableOutput("contents"),
-           plotOutput("lmPlot"),
-           textOutput("summary")
+           verbatimTextOutput("summary")
         )
     )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
     
     
     # load data
@@ -95,23 +86,18 @@ server <- function(input, output) {
                        quote = input$quote)
         return(df)
     })
- 
+
     
+    # reactive attributes
+    data <- reactiveValues(lines = NULL, printSummary = FALSE) 
+     
     
-    # reactive expression for linear model
-    linear_regressor <- eventReactive(input$lmPlot, {
-        # put function here
-        lmPlot <- lm(y ~ x, data = dataInput())
-    })
-       
-    
-    
-    # plot scatter
+    # plot scatter with predicting value
     output$scatterPlot <- renderPlot({
-        plot( y ~ x, data = dataInput())
         ## plot(dataInput()$x, dataInput()$y, xlab = "x", ylab = "y")
+        plot( y ~ x, data = dataInput())
+        abline(data$lines, col = "red", lwd = 2)
     })
-    
     
     
     # plot scatter with predicting value
@@ -120,6 +106,12 @@ server <- function(input, output) {
         abline(linear_regressor(), col = "red", lwd = 2)
     })
     
+    
+    # reactive manipulation
+    observeEvent(input$lmPlot, {
+        data$lines <- lm(y ~ x, data = dataInput()) 
+        data$printSummary <- TRUE 
+    })
     
     
     # print data
@@ -133,30 +125,44 @@ server <- function(input, output) {
     }) 
 
 
-
+    # output the summarty
+    # output$summary <- renderPrint({
+    #     lmPlot <- lm(y ~ x, data = dataInput())
+    #     # print(summary(lmPlot))
+    #     attributes(summary(lmPlot))
+    #     
+    #     # print(paste0("slope: ", summary(lmPlot)$slope))
+    #     # print(paste0("intercept: ", summary(lmPlot)$intercept))
+    #     # print(paste0("correlation coefficient: ", round(summary(lmPlot)$coefficients, 4)))
+    #     # print(paste0("r squared: ", round(summary(lmPlot)$r.squared, 4)))
+    # 
+    # })
+    
+    
     # output the summarty
     output$summary <- renderPrint({
         lmPlot <- lm(y ~ x, data = dataInput())
-        print(summary(lmPlot))
-        # attributes(summary(lmPlot))
+        cor <- cor(dataInput()$x, dataInput()$y, method="pearson")
+        summaryObject <- summary(lmPlot)
         
-        # paste0("slope: ", round(summary(lmPlot)$r.squared, 4))
-        # paste0("intercept: ", round(summary(lmPlot)$intercept, 4))
-        # paste0("correlation coefficient: ", round(summary(lmPlot)$coefficients, 4))
-        # paste0("r squared: ", round(summary(lmPlot)$r.squared, 4))
-
+        
+        if (data$printSummary == TRUE) {
+            
+            # attributes(summaryObject)
+            # print(summaryObject)
+            
+            cat("Model Summary", "\n")
+            cat(paste("Slope: ", round(summaryObject$coefficients[2],4)), "\n")
+            cat(paste("Intercept: ", round(summaryObject$coefficients[1], 4)), "\n")
+            cat(paste("Pearson correlation: ", round(cor, 4)), "\n")
+            cat(paste("r squared: ", round(summaryObject$r.squared, 4)), "\n")
+            
+        }
+        
+        
     })
-    
-    
-
-
-
-    
-
-    
-
-    
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
