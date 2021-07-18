@@ -123,20 +123,6 @@ server <- function(input, output) {
             return(dataInput())
         }
     }) 
-
-
-    # output the summarty
-    # output$summary <- renderPrint({
-    #     lmPlot <- lm(y ~ x, data = dataInput())
-    #     # print(summary(lmPlot))
-    #     attributes(summary(lmPlot))
-    #     
-    #     # print(paste0("slope: ", summary(lmPlot)$slope))
-    #     # print(paste0("intercept: ", summary(lmPlot)$intercept))
-    #     # print(paste0("correlation coefficient: ", round(summary(lmPlot)$coefficients, 4)))
-    #     # print(paste0("r squared: ", round(summary(lmPlot)$r.squared, 4)))
-    # 
-    # })
     
     
     # output the summarty
