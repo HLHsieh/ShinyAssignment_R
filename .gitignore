@@ -9,6 +9,7 @@
 .gitconfig
 .rstudio/
 .subversion/
+.ipynb_checkpoints
 
 # History files
 .Rhistory
