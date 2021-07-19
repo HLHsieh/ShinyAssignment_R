@@ -1,4 +1,3 @@
-
 # Load package
 library(shiny)
 
