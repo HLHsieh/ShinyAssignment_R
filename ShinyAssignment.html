@@ -14355,7 +14355,13 @@ a.anchor-link {
             <span class="n">tags</span><span class="o">$</span><span class="nf">hr</span><span class="p">(),</span>
             
             <span class="c1"># Action Button for linear model</span>
-            <span class="nf">actionButton</span><span class="p">(</span><span class="s">&quot;lmPlot&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Linear Model&quot;</span><span class="p">)</span>
+            <span class="nf">actionButton</span><span class="p">(</span><span class="s">&quot;lmPlot&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Linear Model&quot;</span><span class="p">),</span>
+            
+            <span class="c1"># Horizontal line ----</span>
+            <span class="n">tags</span><span class="o">$</span><span class="nf">hr</span><span class="p">(),</span>
+ 
+            <span class="c1"># Download Button for linear model</span>
+            <span class="nf">downloadButton</span><span class="p">(</span><span class="s">&#39;downloadPlot&#39;</span><span class="p">,</span> <span class="s">&#39;Download Plot&#39;</span><span class="p">)</span>                      
             
         <span class="p">),</span>
 
@@ -14409,13 +14415,6 @@ a.anchor-link {
     <span class="p">})</span>
     
     
-    <span class="c1"># plot scatter with predicting value</span>
-    <span class="n">output</span><span class="o">$</span><span class="n">lmPlot</span> <span class="o">&lt;-</span> <span class="nf">renderPlot</span><span class="p">({</span>
-        <span class="nf">plot</span><span class="p">(</span> <span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="nf">dataInput</span><span class="p">())</span>
-        <span class="nf">abline</span><span class="p">(</span><span class="nf">linear_regressor</span><span class="p">(),</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span> <span class="n">lwd</span> <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
-    <span class="p">})</span>
-    
-    
     <span class="c1"># reactive manipulation</span>
     <span class="nf">observeEvent</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">lmPlot</span><span class="p">,</span> <span class="p">{</span>
         <span class="n">data</span><span class="o">$</span><span class="n">lines</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="nf">dataInput</span><span class="p">())</span> 
@@ -14453,9 +14452,23 @@ a.anchor-link {
             <span class="nf">cat</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;r squared: &quot;</span><span class="p">,</span> <span class="nf">round</span><span class="p">(</span><span class="n">summaryObject</span><span class="o">$</span><span class="n">r.squared</span><span class="p">,</span> <span class="m">4</span><span class="p">)),</span> <span class="s">&quot;\n&quot;</span><span class="p">)</span>
             
         <span class="p">}</span>
-        
-        
     <span class="p">})</span>
+    
+    
+    <span class="n">lmGraph</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(){</span>
+        <span class="nf">plot</span><span class="p">(</span> <span class="n">y</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="nf">dataInput</span><span class="p">())</span>
+        <span class="nf">abline</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">lines</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">,</span> <span class="n">lwd</span> <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    
+    <span class="n">output</span><span class="o">$</span><span class="n">downloadPlot</span> <span class="o">&lt;-</span> <span class="nf">downloadHandler</span><span class="p">(</span>
+        <span class="n">filename</span> <span class="o">&lt;-</span>  <span class="nf">function</span><span class="p">()</span> <span class="p">{</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">strsplit</span><span class="p">(</span><span class="nf">as.character</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">file1</span><span class="p">),</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="n">fixed</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)[[</span><span class="m">1</span><span class="p">]][</span><span class="m">1</span><span class="p">],</span> <span class="s">&#39;_lm.png&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span> <span class="p">},</span>
+        <span class="n">content</span> <span class="o">&lt;-</span>  <span class="nf">function</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nf">png</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="nf">lmGraph</span><span class="p">()</span>
+            <span class="nf">dev.off</span><span class="p">()</span>
+        <span class="p">})</span>
+    
 <span class="p">}</span>
 </pre></div>
 
@@ -14492,7 +14505,7 @@ a.anchor-link {
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
 <pre>
-Listening on http://127.0.0.1:5087
+Listening on http://127.0.0.1:7259
 
 </pre>
 </div>
