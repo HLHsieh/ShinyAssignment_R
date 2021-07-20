@@ -57,7 +57,13 @@ ui <- fluidPage(
             tags$hr(),
             
             # Action Button for linear model
-            actionButton("lmPlot", label = "Linear Model")
+            actionButton("lmPlot", label = "Linear Model"),
+            
+            # Horizontal line ----
+            tags$hr(),
+ 
+            # Download Button for linear model
+            downloadButton('downloadPlot', 'Download Plot')                      
             
         ),
 
@@ -99,13 +105,6 @@ server <- function(input, output) {
     })
     
     
-    # plot scatter with predicting value
-    output$lmPlot <- renderPlot({
-        plot( y ~ x, data = dataInput())
-        abline(linear_regressor(), col = "red", lwd = 2)
-    })
-    
-    
     # reactive manipulation
     observeEvent(input$lmPlot, {
         data$lines <- lm(y ~ x, data = dataInput()) 
@@ -143,9 +142,24 @@ server <- function(input, output) {
             cat(paste("r squared: ", round(summaryObject$r.squared, 4)), "\n")
             
         }
-        
-        
     })
+    
+    
+    lmGraph <- function(){
+        plot( y ~ x, data = dataInput())
+        abline(data$lines, col = "red", lwd = 2)
+    }
+    
+    
+    output$downloadPlot <- downloadHandler(
+        filename <-  function() { paste(strsplit(as.character(input$file1), ".", fixed = TRUE)[[1]][1], '_lm.png', sep='') },
+        content <-  function(file) {
+            png(file)
+            lmGraph()
+            dev.off()
+        })
+    
+    
 }
 
 # Run the application 
